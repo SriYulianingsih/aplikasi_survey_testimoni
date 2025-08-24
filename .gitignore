@@ -1,0 +1,96 @@
+#----------------------------------------
+# OS & Editor Files (sampah sistem)
+#----------------------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*~
+.directory
+.Trash-*
+
+#----------------------------------------
+# Environment & Config Sensitif
+#----------------------------------------
+.env               # File environment jangan di-push (isi bisa sensitif)
+.vagrant
+Vagrantfile
+
+#----------------------------------------
+# Writable folders (isi runtime CI4)
+# Jangan di-track karena selalu berubah
+#----------------------------------------
+writable/cache/*
+!writable/cache/index.html
+
+writable/logs/*
+!writable/logs/index.html
+
+writable/session/*
+!writable/session/index.html
+
+writable/uploads/*
+!writable/uploads/index.html
+
+writable/debugbar/*
+!writable/debugbar/.gitkeep
+
+php_errors.log
+
+#----------------------------------------
+# User Guide & Build Files (CI4 bawaan)
+#----------------------------------------
+user_guide_src/build/*
+user_guide_src/cilexer/build/*
+user_guide_src/cilexer/dist/*
+user_guide_src/cilexer/pycilexer.egg-info/*
+
+#----------------------------------------
+# Testing & Coverage
+#----------------------------------------
+tests/coverage*
+phpunit
+/results/
+phpunit*.xml
+
+#----------------------------------------
+# Composer (biar ringan, install di server/dev saja)
+#----------------------------------------
+vendor/
+
+#----------------------------------------
+# Frontend Libraries
+#----------------------------------------
+AdminLTE-3.2.0/     # AdminLTE jangan dipush, bisa di-download ulang
+public/adminlte
+
+# Kalau ada node_modules, ignore juga
+node_modules/
+
+#----------------------------------------
+# IDE / Editor Config
+#----------------------------------------
+.idea/
+*.iml
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.php-version
+.phpintel
+/nbproject/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/nbactions.xml
+/nb-configuration.xml
+/.nb-gradle/
+
+#----------------------------------------
+# Backup / Temporary Files
+#----------------------------------------
+*.bak
+*.tmp
+*.swp
