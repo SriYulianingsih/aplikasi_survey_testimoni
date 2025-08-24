@@ -64,7 +64,10 @@ vendor/
 # Frontend Libraries
 #----------------------------------------
 AdminLTE-3.2.0/     # AdminLTE jangan dipush, bisa di-download ulang
-public/adminlte
+public/adminlte/
+tests/
+vendor/
+writable/
 
 # Kalau ada node_modules, ignore juga
 node_modules/
