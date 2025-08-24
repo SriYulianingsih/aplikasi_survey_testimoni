@@ -1,92 +1,125 @@
 <?= $this->extend('admin/layout/template') ?>
 <?= $this->section('content') ?>
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <title>Statistik Survei</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background: #f8f9fa; }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .table th, .table td { vertical-align: middle; }
+        @media (max-width: 767px) {
+            .row.text-center > div[class^='col-'] { margin-bottom: 1rem; }
+            .row > div[class^='col-'] { margin-bottom: 1rem; }
+        }
+    </style>
 </head>
-<body class="container mt-4">
+<body class="container py-4">
 
-    <h2 class="mb-4">Statistik Survei Kepuasan</h2>
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-2">
+        <h2 class="mb-0 fw-bold text-primary">Statistik Survei Kepuasan</h2>
+        <span class="badge bg-secondary fs-6">Update: <?= date('d M Y') ?></span>
+    </div>
 
     <!-- Bagian Atas: Summary Cards -->
-    <div class="row text-center mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white shadow">
+    <div class="row text-center mb-4 g-3">
+        <div class="col-6 col-md-3">
+            <div class="card bg-primary text-white shadow h-100">
                 <div class="card-body">
-                    <h5>Total Responden</h5>
-                    <h3><?= $totalResponden ?></h3>
+                    <h6 class="fw-light">Total Responden</h6>
+                    <h2 class="fw-bold mb-0"><i class="bi bi-people"></i> <?= $totalResponden ?></h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white shadow">
+        <div class="col-6 col-md-3">
+            <div class="card bg-success text-white shadow h-100">
                 <div class="card-body">
-                    <h5>Rata-rata Kepuasan</h5>
-                    <h3><?= number_format(($avgKepuasan['pertanyaan1'] + $avgKepuasan['pertanyaan2'] + $avgKepuasan['pertanyaan3'] + $avgKepuasan['pertanyaan4'])/4, 2) ?></h3>
+                    <h6 class="fw-light">Rata-rata Kepuasan</h6>
+                    <h2 class="fw-bold mb-0"><i class="bi bi-bar-chart"></i> <?= number_format(($avgKepuasan['pertanyaan1'] + $avgKepuasan['pertanyaan2'] + $avgKepuasan['pertanyaan3'] + $avgKepuasan['pertanyaan4'])/4, 2) ?></h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white shadow">
+        <div class="col-6 col-md-3">
+            <div class="card bg-info text-white shadow h-100">
                 <div class="card-body">
-                    <h5>Puas</h5>
-                    <h3><?= $puas ?></h3>
+                    <h6 class="fw-light">Puas</h6>
+                    <h2 class="fw-bold mb-0"><i class="bi bi-emoji-smile"></i> <?= $puas ?></h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-danger text-white shadow">
+        <div class="col-6 col-md-3">
+            <div class="card bg-danger text-white shadow h-100">
                 <div class="card-body">
-                    <h5>Tidak Puas</h5>
-                    <h3><?= $tidakPuas ?></h3>
+                    <h6 class="fw-light">Tidak Puas</h6>
+                    <h2 class="fw-bold mb-0"><i class="bi bi-emoji-frown"></i> <?= $tidakPuas ?></h2>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Bagian Tengah: Grafik -->
-    <div class="row">
-        <div class="col-md-6">
-            <canvas id="barChart"></canvas>
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold">Grafik Rata-rata Skor</div>
+                <div class="card-body">
+                    <canvas id="barChart" style="min-height:260px;"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <canvas id="pieChart"></canvas>
+        <div class="col-12 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold">Grafik Kepuasan</div>
+                <div class="card-body">
+                    <canvas id="pieChart" style="min-height:260px;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Bagian Bawah: Tabel Rekap -->
-    <h4 class="mt-5">Rekap Jawaban</h4>
-    <table class="table table-hover table-striped align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Pertanyaan</th>
-                <th>Jawaban</th>
-                <th>Jumlah</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($dataDistribusi as $pertanyaan => $data): ?>
-                <?php foreach($data as $row): ?>
-                    <tr>
-                        <td><?= ucfirst($pertanyaan) ?></td>
-                        <td><?= $row[$pertanyaan] ?></td>
-                        <td><?= $row['jumlah'] ?></td>
-                    </tr>
+    <h4 class="mt-5 fw-bold">Rekap Jawaban</h4>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>Pertanyaan</th>
+                    <th>Jawaban</th>
+                    <th>Jumlah</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($dataDistribusi as $pertanyaan => $data): ?>
+                    <?php foreach($data as $row): ?>
+                        <tr>
+                            <td><?= ucfirst($pertanyaan) ?></td>
+                            <td><?= $row[$pertanyaan] ?></td>
+                            <td><span class="badge bg-primary fs-6"><?= $row['jumlah'] ?></span></td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-
-    <!-- Analisis Singkat -->
-    <div class="alert alert-secondary mt-4">
-        <strong>Analisis:</strong> 
-        Dari total <?= $totalResponden ?> responden, sebanyak <?= $puas ?> (<?= round(($puas/$totalResponden)*100,1) ?>%) merasa puas,
-        sementara <?= $tidakPuas ?> (<?= round(($tidakPuas/$totalResponden)*100,1) ?>%) merasa tidak puas.
+            </tbody>
+        </table>
     </div>
 
+    <!-- Analisis Singkat -->
+    <div class="alert alert-info mt-4 shadow-sm">
+        <strong>Analisis:</strong> 
+        Dari total <b><?= $totalResponden ?></b> responden, sebanyak <b><?= $puas ?></b> (<span class="text-success fw-bold"><?= round(($puas/$totalResponden)*100,1) ?>%</span>) merasa puas,
+        sementara <b><?= $tidakPuas ?></b> (<span class="text-danger fw-bold"><?= round(($tidakPuas/$totalResponden)*100,1) ?>%</span>) merasa tidak puas.
+    </div>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script>
         // Data Bar Chart
         const barCtx = document.getElementById('barChart').getContext('2d');
@@ -102,8 +135,25 @@
                         <?= $avgKepuasan['pertanyaan3'] ?>,
                         <?= $avgKepuasan['pertanyaan4'] ?>
                     ],
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(40, 167, 69, 0.7)',
+                        'rgba(23, 162, 184, 0.7)',
+                        'rgba(220, 53, 69, 0.7)'
+                    ],
+                    borderRadius: 8,
+                    borderWidth: 2
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
             }
         });
 
@@ -115,8 +165,17 @@
                 labels: ['Puas', 'Tidak Puas'],
                 datasets: [{
                     data: [<?= $puas ?>, <?= $tidakPuas ?>],
-                    backgroundColor: ['#28a745', '#dc3545']
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderColor: ['#fff', '#fff'],
+                    borderWidth: 2
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: { enabled: true }
+                }
             }
         });
     </script>
